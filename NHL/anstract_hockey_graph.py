@@ -1,9 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
-from Graph import BarGraph, Graph2DScatter
-from nhl_logos import logo_search
-from test import get_list_values, clean_data
+from Graph import Graph2DScatter
+from NHL.data import get_list_values, clean_data
 from statistics import stdev
-import standings
 
 GA, XGA, GF, XGF = 73, 60, 25, 12
 
@@ -40,10 +38,11 @@ class AbstractScatterGraph(AbstractGraph):
         top_edge = y - 20
         trw, trh = self.draw.textsize(self.corner_labels[0], font=self.sub_title_font)
         brw, brh = self.draw.textsize(self.corner_labels[3], font=self.sub_title_font)
+        adj1 = len(self.corner_labels[3])//3
         adj = len(self.corner_labels[2])//3
         self.draw.text((left_edge, top_edge + trh), text=self.corner_labels[1], fill=(0, 0, 0, 255), font=self.sub_title_font)
         self.draw.text((left_edge, bottom_edge - brh), text=self.corner_labels[3], fill=(0, 0, 0, 255), font=self.sub_title_font)
-        self.draw.text((right_edge - trw, top_edge + trh), text=self.corner_labels[0], fill=(0, 0, 0, 255), font=self.sub_title_font)
+        self.draw.text((right_edge - adj1*trw, top_edge + trh), text=self.corner_labels[0], fill=(0, 0, 0, 255), font=self.sub_title_font)
         self.draw.text((right_edge - adj*(brw),bottom_edge - brh), text=self.corner_labels[2], fill=(0, 0, 0, 255), font=self.sub_title_font)
 
     def title_placement(self):

@@ -42,7 +42,7 @@ class WeekPredictions():
         self.draw.text(((70), (height / 2) - th), text=title, fill=(0, 0, 0, 255), font=title_font)
         self.draw.text(((70), (height / 2) + 10), text=subtitle, fill=(0, 0, 0, 255), font=sub_title_font)
 
-        self.image.save('week10' '.png')
+        self.image.save('week'+week+ '.png')
 
     def color_correction(self, img):
         home_logo = img.load()
@@ -57,4 +57,4 @@ class WeekPredictions():
 
 
 
-WeekPredictions('10')
+WeekPredictions('11')

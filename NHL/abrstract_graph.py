@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 from labels import MLBLabel
-from Graph import BarGraph, Graph2DScatter
+from Graph import Graph2DScatter
 
 
 class AbstractGraph:
