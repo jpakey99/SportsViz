@@ -1,0 +1,10 @@
+{
+  "main_consumer_key" : "",
+  "main_consumer_secret": "",
+  "main_access_token": "",
+  "main_access_token_secret": "",
+  "new_api" : "",
+  "new_api_secret": "",
+  "new_access_token" : "",
+  "new_access_secret" : ""
+}
