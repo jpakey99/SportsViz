@@ -1,4 +1,13 @@
 import pandas as pd
+import  requests
+
+
+def draft_data(year):
+    url = 'https://www.pro-football-reference.com/years/'+year+'/draft.htm'
+    html = requests.get(url).content
+    df_list = pd.read_html(html)
+    df = df_list[0]
+    df.to_csv('nfltest.csv')
 
 
 def season_data(year):

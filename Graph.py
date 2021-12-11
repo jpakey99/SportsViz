@@ -98,14 +98,57 @@ class PointLabels(Modifier):
             self.ax.annotate(self.labels[index], (self.x[index], self.y[index]), textcoords="offset points", ha='center', xytext=(0, -25))
 
 
-class Graph2DScatter:
-    def __init__(self, x, y, labels, axis_labels, average_lines=True, inverty=False, invertx=False, size=(12.2,12), diag_lines=True, best_fit=False, dot_labels=None, average=(None, None)):
-        self.modifiers = []
+class Labels(Modifier):
+    def __init__(self, ax, x, y, labels):
+        self.ax = ax
         self.x = x
         self.y = y
         self.labels = labels
+
+    def add_modification(self):
+        for index in range(0, len(self.x)):
+            image = OffsetImage(plt.imread(self.labels[index]), zoom=.40)
+            self.ax.autoscale()
+            ab = AnnotationBbox(image, (self.x[index], self.y[index]), frameon=False)
+            self.ax.add_artist(ab)
+
+
+class Dots(Modifier):
+    def __init__(self, ax, x, y, label=''):
+        self.ax = ax
+        self.x = x
+        self.y = y
+        self.label = label
+
+    def add_modification(self):
+        self.ax.scatter(self.x, self.y, label=self.label)
+
+
+class Graph2DScatter:
+    def __init__(self, x, y, labels, axis_labels, average_lines=True, inverty=False, invertx=False, size=(12.2, 12), diag_lines=True, best_fit=False, dot_labels=None, average=(None, None),
+                 multiple_x=None, x_ticks=None, xaxis=None, yaxis=None):
+        self.modifiers = []
+        self.x = x
+        self.y = y
         self.fig = plt.figure(figsize=size)
         self.ax = self.fig.add_subplot()
+        # self.xaxis = xaxis
+        # self.yaxis = yaxis
+        if multiple_x is None:
+            pass
+        else:
+            years = range(1951, 2020)
+            i = 0
+            for t in multiple_x[:-1]:
+                self.modifiers.append(Dots(self.ax, t, range(1, len(t)+1), label=str(years[i])))
+                i += 1
+        if x_ticks is not None:
+            plt.xticks(x_ticks)
+        if not labels:
+            self.modifiers.append(Dots(self.ax, self.x, self.y, label='2018'))
+        else:
+            self.labels = labels
+            self.modifiers.append(Labels(self.ax, self.x, self.y, labels))
         if dot_labels is None:
             self.dot_labels = []
         else:
@@ -123,17 +166,17 @@ class Graph2DScatter:
             self.modifiers.append(BestFit(self.x, self.y))
 
     def graph(self):
-        # ax.scatter(self.x, self.y)
-        for index in range(0,len(self.x)):
-            image = OffsetImage(plt.imread(self.labels[index]), zoom=.40)
-            self.ax.autoscale()
-            ab = AnnotationBbox(image, (self.x[index], self.y[index]), frameon=False)
-            self.ax.add_artist(ab)
         self.ax.set_xlabel(self.axis_labels[0], fontsize=18)
         self.ax.set_ylabel(self.axis_labels[1], fontsize=18)
         for modifier in self.modifiers:
             modifier.add_modification()
-        return plt
+        # if self.xaxis is not None:
+        #     plt.ylim([self.yaxis[0], self.yaxis[1]])
+        #     plt.xlim([self.xaxis[0], self.xaxis[1]])
+        # plt.legend(loc="upper right")
+        # plt.margins(0, 0)
+        plt.savefig('1', bbox_inches='tight')
+        # return plt
 
 
 class BarGraph:
@@ -154,7 +197,7 @@ class BarGraph:
         fig = plt.figure(figsize=(23, 10.7))
         ax = fig.add_subplot()
         if self.colors is None:
-            plt.bar(self.x, self.y, edgecolor='black', linewidth=2,)
+            plt.bar(self.x, self.y, edgecolor='black', linewidth=2, )
         else:
             plt.bar(self.x, self.y, edgecolor='black', linewidth=2, color=self.colors)
         plt.margins(0.01, 0.01)

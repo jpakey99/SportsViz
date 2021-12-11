@@ -3,21 +3,19 @@ import pandas as pd
 
 
 def download_data():
-    # url = 'https://moneypuck.com/moneypuck/playerData/seasonSummary/2021/regular/teams.csv'
-    # r = requests.get(url, allow_redirects=True)
-    # open('moneypuck.csv', 'wb').write(r.content)
+    url = 'https://moneypuck.com/moneypuck/playerData/seasonSummary/2021/regular/teams.csv'
+    r = requests.get(url, allow_redirects=True)
+    open('moneypuck.csv', 'wb').write(r.content)
 
-    url = 'https://www.pro-football-reference.com/years/2020/draft.htm'#'http://www.naturalstattrick.com/teamtable.php'
+    url ='http://www.naturalstattrick.com/teamtable.php'
     html = requests.get(url).content
     df_list = pd.read_html(html)
     df = df_list[-1]
-    df.to_csv('nfltest.csv')
+    df.to_csv('stattrick.csv')
 
-    # df.to_csv('stattrick.csv')
-
-    # url = 'https://moneypuck.com/moneypuck/playerData/seasonSummary/2021/regular/skaters.csv'
-    # r = requests.get(url, allow_redirects=True)
-    # open('players.csv', 'wb').write(r.content)
+    url = 'https://moneypuck.com/moneypuck/playerData/seasonSummary/2021/regular/skaters.csv'
+    r = requests.get(url, allow_redirects=True)
+    open('players.csv', 'wb').write(r.content)
 
 
 def clean_data(situation='5on5', file='moneypuck.csv'):

@@ -58,8 +58,10 @@ class AbstractScatterGraph(AbstractGraph):
     def create_image(self):
         x, y = 800, 20
         self.title_placement()
-        self.graph.graph().savefig('1', bbox_inches='tight')
+        self.graph.graph()
+        # .savefig('1', bbox_inches='tight', pad_inches = .25)
         g: Image.Image = Image.open('1.png')
+        # g.show()
         self.graph_size = g.size
         self.image.paste(g, box=(x, y))
         self.corner_label_placement()

@@ -1,6 +1,6 @@
 import datetime
 from NHL.hockey_graphs import *
-from NHL.individual_graphs import xIndivOverall, TeamGameScore
+from NHL.individual_graphs import *
 from NHL.nhl_logos import abbr
 import requests
 
@@ -77,18 +77,20 @@ def create_indiv_viz():
     time = datetime.datetime.now()
     date = time.strftime("%m-%d-%Y")
     y_d = time.strftime("%Y-%m-%d")
+
+    team_data = nhl_data.clean_data(STAN, 'players.csv')
+    players = get_list_values(XGF, XGA, team_data, 'ALL')
+    ts = top_23_skaters(players)
+    team_stats = depack_values(ts)
+    xmin, xmax = min(team_stats[2]), max(team_stats[2])
+    ymin, ymax = min(team_stats[3]), max(team_stats[3])
+
     viz_list = [
         xIndivOverall,
         # TeamGameScore
     ]
 
     teams = get_teams_playing(y_d)
-    # teams = [
-    #     'ANA', 'ARI', 'BOS', 'BUF', 'CAR', 'CBJ', 'CGY', 'CHI',
-    #     'COL', 'DAL', 'DET', 'EDM', 'FLA', 'LAK', 'MIN', 'MTL',
-    #     'NJD', 'NSH', 'NYR', 'NYI', 'OTT', 'PHI', 'PIT', 'SEA',
-    #     'STL', 'SJS', 'TBL', 'TOR', 'VAN', 'VGK', 'WPG', 'WSH'
-    # ]
 
     text, images = [], []
 
@@ -97,7 +99,7 @@ def create_indiv_viz():
         images.append("NHL/graphs//xIndiv"+t+"_Tiers_" + date + ".png",)
 
         for v in viz_list:
-            viz = v(date, t)
+            viz = v(date, t, xaxis=(xmin, xmax), yaxis=(ymin, ymax))
             viz.create_image()
             viz.save_image()
 
