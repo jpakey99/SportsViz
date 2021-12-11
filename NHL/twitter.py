@@ -10,6 +10,7 @@ def create_viz():
     date = time.strftime("%m-%d-%Y")
     viz_list = [xTeamOverall,
                 TeamOverall,
+                GoalShare,
                 GoalsFor,
                 GoalsAgainst,
                 xPythagGoals,
@@ -18,12 +19,13 @@ def create_viz():
                 PowerPlay,
                 PenaltyKill,
                 PenaltysForxGoalsFor,
-                # PenaltysForxGoalsAgainst
+#                # PenaltysForxGoalsAgainst
                 PDO
                 ]
 
     images  = ["NHL/graphs//xTeam_Tiers_" + date + ".png",
                "NHL/graphs//Team_Tiers_" + date + ".png",
+               "NHL/graphs//GoalShare_" + date + ".png",
                "NHL/graphs//Goals_For_" + date + ".png",
                "NHL/graphs//Goals_Against_" + date + ".png",
                "NHL/graphs//xpygoals_" + date + ".png",
@@ -38,6 +40,7 @@ def create_viz():
 
     text = ["xGoals per 60 at 5 on 5.  Updated: " + date,
             "Goals per 60 at 5 on 5.  Updated: " + date,
+            "Goal Share Percentage at 5 on 5.  Updated: " + date,
             "Goals For per 60 at 5 on 5.  Updated: " + date,
             "Goals Against per 60 at 5 on 5.  Updated: " + date,
             "Pythagorean Win Percentage using xGoals.  Updated: " + date,
