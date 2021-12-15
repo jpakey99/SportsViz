@@ -32,6 +32,35 @@ class xTeamOverall(HockeyGraph):
         self.image.save('NHL/graphs/' + 'xTeam_Tiers' + '_' + self.date + '.png')
 
 
+class GoalShare(HockeyGraph):
+    def __init__(self, date: str):
+        team_data = nhl_data.clean_data(STAN)
+        expected = nhl_data.get_list_values(XGF, XGA, team_data, per60=False)
+        actual = nhl_data.get_list_values(GF, GA, team_data, per60=False)
+        team_stats = self.goal_share(expected[0], actual[0])
+        title = 'Goal Share 5v5'
+        corner_labels = ('good', 'lucky', 'unlucky', 'bad')
+        super().__init__(team_stats, date, title=title, corner_labels=corner_labels)
+        self.axis_labels =  ('xGoalsFor%/60', 'GoalsFor%/60')
+        self.logos = logo_search(team_stats[1])
+        self.graph = Graph2DScatter(team_stats[2], team_stats[3], self.logos, self.axis_labels ,inverty=False, best_fit=True, diag_lines=False)
+        self.graph_size = (0, 0)
+
+    def goal_share(self, expected, actual):
+        expected_share, actual_share, teams = [], [], []
+        for e in expected:
+            for a in actual:
+                if e[0] == a[0]:
+                    teams.append(e[0])
+                    expected_share.append(float(e[1])/(float(e[1]) + float(e[2])))
+                    actual_share.append(float(a[1]) / (float(a[1]) + float(a[2])))
+        return [], teams, expected_share, actual_share
+
+
+    def save_image(self):
+        self.image.save('NHL/graphs/' + 'GoalShare' + '_' + self.date + '.png')
+
+
 class TeamOverall(HockeyGraph):
 
     def __init__(self, date: str):
