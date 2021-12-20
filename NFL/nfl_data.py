@@ -17,6 +17,21 @@ def season_data(year):
     return data
 
 
+def get_indiv_game_data(data):
+    games = []
+    game_id = 'game_id'
+    game_ids = []
+    current_game_id = 0
+    for line in range(len(data)):
+        if current_game_id != data[game_id][line]:
+            current_game_id = data[game_id][line]
+            game_ids.append(current_game_id)
+    for gid in game_ids:
+        g = data.loc[data['game_id'] == gid]
+        games.append(g.values.tolist())
+    return games
+
+
 def get_data(data):
     team_dict = {}
     home_team, away_team, home_epa, away_epa = '', '', 0, 0
@@ -87,5 +102,5 @@ def prediction(team_data):
 
 
 if __name__ == '__main__':
-    tesm_data = get_data(season_data(2021))
-    prediction(tesm_data)
+    tesm_data = season_data(2021)
+    print(get_indiv_game_data(tesm_data))
