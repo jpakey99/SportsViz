@@ -38,7 +38,7 @@ def post_tweet(text, images, reply_id=None, index=0):
 
 def nhl():
     text, images = create_viz()
-    # post_tweet(text, images)
+    post_tweet(text, images)
     # text, images = create_indiv_viz()
     # post_tweet(text, images)
 

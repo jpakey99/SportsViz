@@ -1,10 +1,10 @@
 {
-  "main_consumer_key" : "",
-  "main_consumer_secret": "",
-  "main_access_token": "",
-  "main_access_token_secret": "",
-  "new_api" : "",
-  "new_api_secret": "",
-  "new_access_token" : "",
-  "new_access_secret" : ""
+  "main_consumer_key" : "1unOZ6VKHg1aLKV5O8sxvPPw9",
+  "main_consumer_secret": "fEL5zS7xovxb059dPhWLZIDF1BZbnbHLoOeyLRUwHep0v3qcwa",
+  "main_access_token": "722876348541333504-53Ac3SWd430f7LOq3Za6uVQcSth7j8A",
+  "main_access_token_secret": "t67N81MZlRYJk7FDwkoFj7fQQRywOMwnyEnpOwbaUVPGm",
+  "new_api" : "e4nljUcXkAz6B7geHD9HIi9qf",
+  "new_api_secret": "VoJcEIqCtHDQNySoXeEKk5hU7osnkzo9XVSl0xKGgwaw1ZQSj0",
+  "new_access_token" : "1389331522935824387-Ij0nsiyZyAL45xTRhe38t1Hc1vDSRB",
+  "new_access_secret" : "xb5cW8akeffuXpzj5uSJPs7q18qf0x2LX5ixPBso1GzKs"
 }

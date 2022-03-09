@@ -5,7 +5,7 @@ import labels
 
 width, height = 1920, 1028
 
-TD_PROB, SAFETY_PROB, FG_PROB, OPP_TD_PROB, OPP_SAFETY_PROB, OPP_FG_PROB = 70, 69, 68, 67, 66, 65
+TD_PROB, SAFETY_PROB, FG_PROB, OPP_TD_PROB, OPP_SAFETY_PROB, OPP_FG_PROB = 69, 68, 67, 66, 65, 64
 SIMS = 10000
 
 class DeserveToWinMeter():
@@ -27,6 +27,7 @@ class DeserveToWinMeter():
         home_x, away_x, y, size = 1740, 960, 10, (height-20)//len(self.deserve_to_win)
         half = ((away_x + size) + home_x) // 2
         print(size)
+        print('MIN:', away_x+size, 'HALF:', (home_x+(away_x+size))/2, 'MAX:', home_x)
         for p in self.deserve_to_win:
             self.home_l = Image.open(labels.logos[self.deserve_to_win[p]['home_team']]).resize((70, 70))
             self.away_l = Image.open(labels.logos[self.deserve_to_win[p]['away_team']]).resize((70, 70))
@@ -39,16 +40,18 @@ class DeserveToWinMeter():
             adjust = 35
             dec = round(self.deserve_to_win[p]['home_team_wins']/SIMS, 2)
             percent = round(100*(dec))
-            print(percent, dec)
             text_adjust = adjust/2
             if percent < 50:
                 edge = int(((half - away_x+size) * dec) + away_x+size)
+                print(percent, dec, edge)
                 self.draw.line((half, y + adjust, edge, y + adjust), fill=(0, 255, 0, 255), width=size - 10)
                 tw, th = self.draw.textsize(str(100-percent), font=sub_title_font)
-                print(half - (2*tw))
+                # print(half - (2*tw))
                 self.draw.text((1298, y+text_adjust), text=str(100-percent), fill=(0, 0, 0, 255), font=sub_title_font)
             else:
-                edge = int(((home_x - half) * dec) + half)
+                # edge = int(((home_x - half) * .01) * (percent-50)) + half
+                edge = int(((home_x - half) * dec)) + half
+                print(percent, dec, edge)
                 self.draw.line((half, y + adjust, edge, y + adjust), fill=(0, 255, 0, 255), width=size - 10)
                 tw, th = self.draw.textsize(str(percent), font=sub_title_font)
                 self.draw.text((half + tw, y+text_adjust), text=str(percent), fill=(0, 0, 0, 255), font=sub_title_font)
@@ -139,4 +142,4 @@ class DeserveToWinMeter():
                     home_logo[i, j] = (255, 255, 255, 255)
 
 
-DeserveToWinMeter(13)
+DeserveToWinMeter(19)
