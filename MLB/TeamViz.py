@@ -1,12 +1,9 @@
 from PIL import Image, ImageDraw, ImageFont
-from team_batting_stats import TeamBattingStats
-from team_pitching_stats import TeamPitchingStats
-from labels import MLBLabel
-from team_stats import *
-import database
-from abrstract_graph import AbstractScatterGraph, AbstractGraph
-from statistics import stdev
+from MLB.team_batting_stats import TeamBattingStats
+from MLB.team_pitching_stats import TeamPitchingStats
+from MLB.abrstract_graph import AbstractScatterGraph, AbstractGraph
 from Graph import *
+from MLB.data import statcast_stats, statcast_stats_fielding
 
 
 WIDTH, HEIGHT = 1920,1028
@@ -67,11 +64,126 @@ class TeamOverall(TeamScatterGraph):
         self.fip = self.pitching_stats.xfip_adjusted()
         combined, x, y, labels = self.combine_lists(self.fip, self.wrc)
         self.logos = self.labels.get_labels(labels)
-        self.graph = Graph2DScatter(y, x, self.logos, self.axis_labels ,inverty=True)
+        self.graph = Graph2DScatter(y, x, self.logos, self.axis_labels ,inverty=True, zoom=.2)
         self.graph_size = (0, 0)
 
     def save_image(self):
-        self.image.save('graphs//' + 'Team_Tiers' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'Team_Tiers' + '_' + self.date + '.png')
+
+
+class OverallStatcastExpected(AbstractScatterGraph):
+    def __init__(self, date: str):
+        subtitle = 'Updated: ' + date
+        title = 'Overall xwOBA'
+        credits = 'Twitter: @jpakey99, Idea: @CChartingHockey\n data: Statcast'  #Fine tone centering 2nd line
+        corner_labels = ('good', 'dull', 'fun', 'bad')
+        super().__init__(title=title, subtitle=subtitle, credits=credits, corner_labels=corner_labels, date=date)
+        self.axis_labels =  ('xwOBA Batting', 'xwOBA Pitching')
+        bcombined=  statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=batter-team&year=2022&position=&team=&min=q&csv=true')[0]
+        pcombined = statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=pitcher-team&year=2022&position=&team=&min=q&csv=true')[0]
+        combined, x, y, labels = self.combine_lists(bcombined, pcombined)
+        self.logos = self.labels.get_labels(labels)
+        self.graph = Graph2DScatter(x, y, self.logos, self.axis_labels ,inverty=True, zoom=.2)
+        self.graph_size = (0, 0)
+
+    def combine_lists(self, list1, list2):
+        combined, x, y, labels = [], [], [], []
+        for item in list1:
+            team = item[0]
+            for i in list2:
+                t = i[0]
+                if team == t:
+                    combined.append((team, item[1], i[1]))
+                    x.append(item[1])
+                    y.append(i[1])
+                    labels.append(team)
+        return combined, x, y, labels
+
+    def save_image(self):
+        self.image.save('MLB//graphs//' + 'xwOBA_Overall' + '_' + self.date + '.png')
+
+
+class OverallStatcastActual(AbstractScatterGraph):
+    def __init__(self, date: str):
+        subtitle = 'Updated: ' + date
+        title = 'Overall wOBA'
+        credits = 'Twitter: @jpakey99, Idea: @CChartingHockey\n data: Statcast'  #Fine tone centering 2nd line
+        corner_labels = ('good', 'dull', 'fun', 'bad')
+        super().__init__(title=title, subtitle=subtitle, credits=credits, corner_labels=corner_labels, date=date)
+        self.axis_labels =  ('wOBA Batting', 'wOBA Pitching')
+        bcombined=  statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=batter-team&year=2022&position=&team=&min=q&csv=true')[0]
+        pcombined = statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=pitcher-team&year=2022&position=&team=&min=q&csv=true')[0]
+        combined, x, y, labels = self.combine_lists(bcombined, pcombined)
+        self.logos = self.labels.get_labels(labels)
+        self.graph = Graph2DScatter(x, y, self.logos, self.axis_labels ,inverty=True, zoom=.2)
+        self.graph_size = (0, 0)
+
+    def combine_lists(self, list1, list2):
+        combined, x, y, labels = [], [], [], []
+        for item in list1:
+            team = item[0]
+            for i in list2:
+                t = i[0]
+                if team == t:
+                    combined.append((team, item[1], i[1]))
+                    x.append(item[2])
+                    y.append(i[2])
+                    labels.append(team)
+        return combined, x, y, labels
+
+    def save_image(self):
+        self.image.save('MLB//graphs//' + 'wOBA_Overall' + '_' + self.date + '.png')
+
+
+class BattingStatcast(AbstractScatterGraph):
+    def __init__(self, date: str):
+        subtitle = 'Updated: ' + date
+        title = 'Batting wOBA'
+        credits = 'Twitter: @jpakey99, Idea: @CChartingHockey\n data: Statcast'  #Fine tone centering 2nd line
+        corner_labels = ('good', 'dull', 'fun', 'bad')
+        super().__init__(title=title, subtitle=subtitle, credits=credits, corner_labels=corner_labels, date=date)
+        self.axis_labels =  ('xwOBA', 'wOBA')
+        combined, x, y, labels = statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=batter-team&year=2022&position=&team=&min=q&csv=true')
+        self.logos = self.labels.get_labels(labels)
+        self.graph = Graph2DScatter(x, y, self.logos, self.axis_labels ,inverty=False, zoom=.2)
+        self.graph_size = (0, 0)
+
+    def save_image(self):
+        self.image.save('MLB//graphs//' + 'wOBA_Batting' + '_' + self.date + '.png')
+
+
+class PitchingStatcast(AbstractScatterGraph):
+    def __init__(self, date: str):
+        subtitle = 'Updated: ' + date
+        title = 'Pitching wOBA'
+        credits = 'Twitter: @jpakey99, Idea: @CChartingHockey\n data: Statcast'  #Fine tone centering 2nd line
+        corner_labels = ('good', 'dull', 'fun', 'bad')
+        super().__init__(title=title, subtitle=subtitle, credits=credits, corner_labels=corner_labels, date=date)
+        self.axis_labels =  ('xwOBA', 'wOBA')
+        combined, x, y, labels = statcast_stats('https://baseballsavant.mlb.com/leaderboard/expected_statistics?type=pitcher-team&year=2022&position=&team=&min=q&csv=true')
+        self.logos = self.labels.get_labels(labels)
+        self.graph = Graph2DScatter(x, y, self.logos, self.axis_labels ,inverty=True, invertx=True, zoom=.2)
+        self.graph_size = (0, 0)
+
+    def save_image(self):
+        self.image.save('MLB//graphs//' + 'wOBA_Pitching' + '_' + self.date + '.png')
+
+
+class FieldingStats(AbstractScatterGraph):
+    def __init__(self, date: str):
+        subtitle = 'Updated: ' + date
+        title = 'Fielding Production'
+        credits = 'Twitter: @jpakey99, Idea: @CChartingHockey\n data: Statcast & Fangraphs'  #Fine tone centering 2nd line
+        corner_labels = ('good', 'dull', 'fun', 'bad')
+        super().__init__(title=title, subtitle=subtitle, credits=credits, corner_labels=corner_labels, date=date)
+        self.axis_labels =  ('Outs Above Average', 'Defensive Runs Saved')
+        combined, x, y, labels = statcast_stats_fielding('https://baseballsavant.mlb.com/leaderboard/outs_above_average?type=Fielding_Team&startYear=2022&endYear=2022&split=no&team=&range=year&min=q&pos=&roles=&viz=hide&csv=true')
+        self.logos = self.labels.get_labels(labels)
+        self.graph = Graph2DScatter(x, y, self.logos, self.axis_labels ,inverty=False, zoom=.2)
+        self.graph_size = (0, 0)
+
+    def save_image(self):
+        self.image.save('MLB//graphs//' + 'fielding' + '_' + self.date + '.png')
 
 
 class TeamLuckGraph(TeamScatterGraph):
@@ -85,53 +197,53 @@ class TeamLuckGraph(TeamScatterGraph):
         self.p_babip = self.pitching_stats.babip_adjusted()
         combined, x, y, labels = self.combine_lists(self.b_babip, self.p_babip)
         self.logos = self.labels.get_labels(labels)
-        self.graph = Graph2DScatter(y, x, self.logos, self.axis_labels, inverty=False)
+        self.graph = Graph2DScatter(y, x, self.logos, self.axis_labels, inverty=False, zoom=.2)
 
     def save_image(self):
-        self.image.save('graphs//' + 'Team_luck' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'Team_luck' + '_' + self.date + '.png')
 
 
-class TeamRecordVsRunDif(TeamScatterGraph):
-    def __init__(self, team_stats: [TeamBattingStats, TeamPitchingStats], date: str):
-        subtitle = 'Updated: ' + date
-        title = 'Win % vs Run Differential'
-        credits = 'Twitter: @jpakey99, data: Fangraphs'
-        corner_labels, self.axis_labels = ('good', 'dull', 'fun', 'bad'), ('Run Differential', 'Winning Percentage')
-        super().__init__(team_stats,title=title, credits=credits, subtitle=subtitle, date=date, corner_labels=corner_labels)
-        self.runs_for, self.runs_against = self.batting_stats.runs(), self.pitching_stats.runs()
-        self.dif = self.get_run_diff() # get z-score for run dif
-        self.wper = TeamStandings(2021).get_standings()
-        combined, x, y, logos = self.combine_lists(self.dif, self.wper)
-        x_axis = []
-        self.graph = Graph2DScatter(x, y, logos, self.axis_labels, inverty=False, diag_lines=False, average_lines=True, best_fit=True)
-        self.graph_size = (0,0)
-
-    def combine_lists(self, list1, list2):
-        combined, x, y, labels = [], [], [], []
-        for diff_team, diff in list1:
-            tm = database.get_name_from_abbr(diff_team)[0]
-            if tm.split(' ')[-1] == 'Sox' or tm.split(' ')[-1] == 'Jays':
-                s_team = tm.split(' ')[-2] + ' ' + tm.split(' ')[-1]
-            else:
-                s_team = tm.split(' ')[-1]
-            for wp_team, wp in list2:
-                if s_team in wp_team:
-                    combined.append((diff, wp))
-                    x.append(diff)
-                    y.append(float(wp))
-                    labels.append(diff_team)
-        return combined, x, y, self.labels.get_labels(labels)
-
-    def get_run_diff(self):
-        diff, teams = [], []
-        for bteam in self.runs_for:
-            for pteam in self.runs_against:
-                if bteam[0] == pteam[0]:
-                    diff.append((bteam[0], bteam[1]-pteam[1]))
-        return diff
-
-    def save_image(self):
-        self.image.save('graphs//' + 'W%vRunDiff' + '_' + self.date + '.png')
+# class TeamRecordVsRunDif(TeamScatterGraph):
+#     def __init__(self, team_stats: [TeamBattingStats, TeamPitchingStats], date: str):
+#         subtitle = 'Updated: ' + date
+#         title = 'Win % vs Run Differential'
+#         credits = 'Twitter: @jpakey99, data: Fangraphs'
+#         corner_labels, self.axis_labels = ('good', 'dull', 'fun', 'bad'), ('Run Differential', 'Winning Percentage')
+#         super().__init__(team_stats,title=title, credits=credits, subtitle=subtitle, date=date, corner_labels=corner_labels)
+#         self.runs_for, self.runs_against = self.batting_stats.runs(), self.pitching_stats.runs()
+#         self.dif = self.get_run_diff() # get z-score for run dif
+#         self.wper = TeamStandings(2021).get_standings()
+#         combined, x, y, logos = self.combine_lists(self.dif, self.wper)
+#         x_axis = []
+#         self.graph = Graph2DScatter(x, y, logos, self.axis_labels, inverty=False, diag_lines=False, average_lines=True, best_fit=True)
+#         self.graph_size = (0,0)
+#
+#     def combine_lists(self, list1, list2):
+#         combined, x, y, labels = [], [], [], []
+#         for diff_team, diff in list1:
+#             tm = database.get_name_from_abbr(diff_team)[0]
+#             if tm.split(' ')[-1] == 'Sox' or tm.split(' ')[-1] == 'Jays':
+#                 s_team = tm.split(' ')[-2] + ' ' + tm.split(' ')[-1]
+#             else:
+#                 s_team = tm.split(' ')[-1]
+#             for wp_team, wp in list2:
+#                 if s_team in wp_team:
+#                     combined.append((diff, wp))
+#                     x.append(diff)
+#                     y.append(float(wp))
+#                     labels.append(diff_team)
+#         return combined, x, y, self.labels.get_labels(labels)
+#
+#     def get_run_diff(self):
+#         diff, teams = [], []
+#         for bteam in self.runs_for:
+#             for pteam in self.runs_against:
+#                 if bteam[0] == pteam[0]:
+#                     diff.append((bteam[0], bteam[1]-pteam[1]))
+#         return diff
+#
+#     def save_image(self):
+#         self.image.save('graphs//' + 'W%vRunDiff' + '_' + self.date + '.png')
 
 
 class RAvRF(TeamScatterGraph):
@@ -144,11 +256,11 @@ class RAvRF(TeamScatterGraph):
         self.runs_for, self.runs_against = self.batting_stats.runs(), self.pitching_stats.runs()
         combined, x, y, logos = self.combine_lists(self.runs_for, self.runs_against)
         labels = self.labels.get_labels(logos)
-        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=True, diag_lines=True, average_lines=True, size=(12.2,12))
+        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=True, diag_lines=True, average_lines=True, size=(12.2,12), zoom=.2)
         self.graph_size = (0,0)
 
     def save_image(self):
-        self.image.save('graphs//' + 'RAvRF' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'RAvRF' + '_' + self.date + '.png')
 
 
 class xRAvxRF(TeamScatterGraph):
@@ -161,11 +273,11 @@ class xRAvxRF(TeamScatterGraph):
         self.runs_for, self.runs_against = self.batting_stats.xruns(), self.pitching_stats.xruns()
         combined, x, y, logos = self.combine_lists(self.runs_for, self.runs_against)
         labels = self.labels.get_labels(logos)
-        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=False, diag_lines=True, average_lines=True)
+        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=False, diag_lines=True, average_lines=True, zoom=.2)
         self.graph_size = (0,0)
 
     def save_image(self):
-        self.image.save('graphs//' + 'xRAvXRF' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'xRAvXRF' + '_' + self.date + '.png')
 
 
 class xRFvRF(TeamScatterGraph):
@@ -178,11 +290,11 @@ class xRFvRF(TeamScatterGraph):
         self.xruns_for, self.runs = self.batting_stats.xruns(), self.batting_stats.runs()
         combined, x, y, logos = self.combine_lists(self.xruns_for, self.runs)
         labels = self.labels.get_labels(logos)
-        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=False, diag_lines=False, average_lines=True, best_fit=True)
+        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=False, diag_lines=False, average_lines=True, best_fit=True, zoom=.2)
         self.graph_size = (0,0)
 
     def save_image(self):
-        self.image.save('graphs//' + 'RFvXRF' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'RFvXRF' + '_' + self.date + '.png')
 
 
 class xRAvRA(TeamScatterGraph):
@@ -195,11 +307,11 @@ class xRAvRA(TeamScatterGraph):
         self.xruns_against, self.runs_against = self.pitching_stats.xruns(), self.pitching_stats.runs()
         combined, x, y, logos = self.combine_lists(self.xruns_against, self.runs_against)
         labels = self.labels.get_labels(logos)
-        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=True, diag_lines=False, average_lines=True, best_fit=True)
+        self.graph = Graph2DScatter(x, y, labels, self.axis_labels, inverty=True, diag_lines=False, average_lines=True, best_fit=True, zoom=.2)
         self.graph_size = (0,0)
 
     def save_image(self):
-        self.image.save('graphs//' + 'RAvXRA' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'RAvXRA' + '_' + self.date + '.png')
 
 
 class TeamBarGraph(AbstractGraph):
@@ -294,7 +406,7 @@ class RunDiff(TeamBarGraph):
         self.image.paste(Image.open('1.png'), box=(20, y))
 
     def save_image(self):
-        self.image.save('graphs//' + 'Run_Diff' + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'Run_Diff' + '_' + self.date + '.png')
 
 
 class TeamOverallCard(TeamCard):
@@ -350,7 +462,7 @@ class TeamOverallCard(TeamCard):
         self.image.paste(Image.open('2.png'), box=(1000, y))
 
     def save_image(self):
-        self.image.save('graphs//' + 'Team Card_'+ self.team + '_' + self.date + '.png')
+        self.image.save('MLB//graphs//' + 'Team Card_'+ self.team + '_' + self.date + '.png')
 
 
 def img_creator(image):

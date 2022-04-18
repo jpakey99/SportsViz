@@ -1,5 +1,6 @@
 import tweepy, datetime, json
-from NHL.twitter import *
+from NHL import twitter as nhlTwitter
+from MLB import twitter as mlbTwitter
 
 
 def post_tweet(text, images, reply_id=None, index=0):
@@ -37,11 +38,15 @@ def post_tweet(text, images, reply_id=None, index=0):
 
 
 def nhl():
-    text, images = create_viz()
-    post_tweet(text, images)
+    text, images = nhlTwitter.create_viz()
     # text, images = create_indiv_viz()
-    # post_tweet(text, images)
+    post_tweet(text, images)
+
+
+def mlb():
+    text, images = mlbTwitter.create_viz()
+    post_tweet(text, images)
 
 
 if __name__ == '__main__':
-    nhl()
+    mlb()

@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
-from labels import MLBLabel
+from MLB.labels import MLBLabel
 from Graph import BarGraph, Graph2DScatter
 
 
@@ -54,7 +54,7 @@ class AbstractScatterGraph(AbstractGraph):
     def create_image(self):
         x, y = 800, 20
         self.title_placement()
-        self.graph.graph().savefig('1', bbox_inches='tight')
+        self.graph.graph()
         g: Image.Image = Image.open('1.png')
         self.graph_size = g.size
         self.image.paste(g, box=(x, y))

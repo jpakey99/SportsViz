@@ -1,5 +1,5 @@
 import pybaseball
-from team_stats import TeamStats
+from MLB.team_stats import TeamStats
 
 
 class TeamPitchingStats(TeamStats):

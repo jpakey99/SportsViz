@@ -1,7 +1,6 @@
 import pybaseball
 
-import team_stats
-from team_stats import TeamStats
+from MLB.team_stats import TeamStats
 
 
 class TeamBattingStats(TeamStats):

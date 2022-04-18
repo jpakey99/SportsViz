@@ -99,15 +99,16 @@ class PointLabels(Modifier):
 
 
 class Labels(Modifier):
-    def __init__(self, ax, x, y, labels):
+    def __init__(self, ax, x, y, labels, size=.40):
         self.ax = ax
         self.x = x
         self.y = y
         self.labels = labels
+        self.size = size
 
     def add_modification(self):
         for index in range(0, len(self.x)):
-            image = OffsetImage(plt.imread(self.labels[index]), zoom=.40)
+            image = OffsetImage(plt.imread(self.labels[index]), zoom=self.size)
             self.ax.autoscale()
             ab = AnnotationBbox(image, (self.x[index], self.y[index]), frameon=False)
             self.ax.add_artist(ab)
@@ -126,7 +127,7 @@ class Dots(Modifier):
 
 class Graph2DScatter:
     def __init__(self, x, y, labels, axis_labels, average_lines=True, inverty=False, invertx=False, size=(12.2, 12), diag_lines=True, best_fit=False, dot_labels=None, average=(None, None),
-                 multiple_x=None, x_ticks=None, xaxis=None, yaxis=None):
+                 multiple_x=None, x_ticks=None, xaxis=None, yaxis=None, zoom=.40):
         self.modifiers = []
         self.x = x
         self.y = y
@@ -148,7 +149,7 @@ class Graph2DScatter:
             self.modifiers.append(Dots(self.ax, self.x, self.y, label='2018'))
         else:
             self.labels = labels
-            self.modifiers.append(Labels(self.ax, self.x, self.y, labels))
+            self.modifiers.append(Labels(self.ax, self.x, self.y, labels, size=zoom))
         if dot_labels is None:
             self.dot_labels = []
         else:
