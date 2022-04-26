@@ -45,7 +45,7 @@ def nhl():
 
 def mlb():
     text, images = mlbTwitter.create_viz()
-    post_tweet(text, images)
+    # post_tweet(text, images)
 
 
 if __name__ == '__main__':

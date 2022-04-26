@@ -4,6 +4,9 @@ import matplotlib.pylab as pylab
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import numpy as np
 from statistics import stdev
+from GraphMaker.GraphDecorator import GraphComponent
+from PIL import Image, ImageDraw, ImageFont
+
 
 # bar graph
 # pie graph
@@ -125,59 +128,31 @@ class Dots(Modifier):
         self.ax.scatter(self.x, self.y, label=self.label)
 
 
-class Graph2DScatter:
-    def __init__(self, x, y, labels, axis_labels, average_lines=True, inverty=False, invertx=False, size=(12.2, 12), diag_lines=True, best_fit=False, dot_labels=None, average=(None, None),
-                 multiple_x=None, x_ticks=None, xaxis=None, yaxis=None, zoom=.40):
+class Graph2DScatter(GraphComponent):
+    def __init__(self, x, y, axis_labels, size=(12.2, 12), image=None):
         self.modifiers = []
         self.x = x
         self.y = y
         self.fig = plt.figure(figsize=size)
         self.ax = self.fig.add_subplot()
-        # self.xaxis = xaxis
-        # self.yaxis = yaxis
-        if multiple_x is None:
-            pass
-        else:
-            years = range(1951, 2020)
-            i = 0
-            for t in multiple_x[:-1]:
-                self.modifiers.append(Dots(self.ax, t, range(1, len(t)+1), label=str(years[i])))
-                i += 1
-        if x_ticks is not None:
-            plt.xticks(x_ticks)
-        if not labels:
-            self.modifiers.append(Dots(self.ax, self.x, self.y, label='2018'))
-        else:
-            self.labels = labels
-            self.modifiers.append(Labels(self.ax, self.x, self.y, labels, size=zoom))
-        if dot_labels is None:
-            self.dot_labels = []
-        else:
-            self.modifiers.append(PointLabels(self.ax, self.x, self.y, dot_labels))
-        if average_lines:
-            self.modifiers.append(AverageLines(self.ax, average, x=self.x, y=self.y))
+        self.image = image
         self.axis_labels = axis_labels
-        if inverty:
-            self.modifiers.append(InvertY())
-        if invertx:
-            self.modifiers.append(InvertX())
-        if diag_lines:
-            self.modifiers.append(DiagonalLines(self.ax, self.x, self.y))
-        if best_fit:
-            self.modifiers.append(BestFit(self.x, self.y))
 
-    def graph(self):
+    def add_children(self, child):
+        if isinstance(child, Modifier):
+            self.modifiers.append(child)
+
+    def make_graph(self):
+        x, y = 800, 20
         self.ax.set_xlabel(self.axis_labels[0], fontsize=18)
         self.ax.set_ylabel(self.axis_labels[1], fontsize=18)
         for modifier in self.modifiers:
             modifier.add_modification()
-        # if self.xaxis is not None:
-        #     plt.ylim([self.yaxis[0], self.yaxis[1]])
-        #     plt.xlim([self.xaxis[0], self.xaxis[1]])
-        # plt.legend(loc="upper right")
-        # plt.margins(0, 0)
+
         plt.savefig('1', bbox_inches='tight')
-        # return plt
+        g: Image.Image = Image.open('1.png')
+        self.graph_size = g.size
+        self.image.paste(g, box=(x, y))
 
 
 class BarGraph:

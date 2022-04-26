@@ -38,50 +38,40 @@ def run_team_graphs(year):
     string_time = time.strftime("%m-%d-%Y")
     tps = TeamPitchingStats(year)
     tbs = TeamBattingStats(year)
+
     toc = TeamOverall([tbs, tps], string_time)
-    toc.create_image()
-    # toc.display_image()
     toc.save_image()
 
     ravrf = RAvRF([tbs, tps], string_time)
-    ravrf.create_image()
     # tluck.display_image()
     ravrf.save_image()
 
     bstatcast = BattingStatcast(string_time)
-    bstatcast.create_image()
-    # tluck.display_image()
     bstatcast.save_image()
 
     pstatcast = PitchingStatcast(string_time)
-    pstatcast.create_image()
-    # tluck.display_image()
     pstatcast.save_image()
 
     xostatcast = OverallStatcastExpected(string_time)
-    xostatcast.create_image()
     # tluck.display_image()
     xostatcast.save_image()
 
     ostatcast = OverallStatcastActual(string_time)
-    ostatcast.create_image()
     # tluck.display_image()
     ostatcast.save_image()
 
     fielding = FieldingStats(string_time)
-    fielding.create_image()
     # tluck.display_image()
     fielding.save_image()
 
     xravxrf = xRAvxRF([tbs, tps], string_time)
-    xravxrf.create_image()
     # tluck.display_image()
     xravxrf.save_image()
 
-    # trvrd = TeamRecordVsRunDif([tbs, tps], string_time)
-    # trvrd.create_image()
-    # # tluck.display_image()
-    # trvrd.save_image()
+    # # trvrd = TeamRecordVsRunDif([tbs, tps], string_time)
+    # # trvrd.create_image()
+    # # # tluck.display_image()
+    # # trvrd.save_image()
 
     trun_diff = RunDiff([tbs, tps], string_time)
     trun_diff.create_image()
